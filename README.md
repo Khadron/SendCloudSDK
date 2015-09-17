@@ -1,2 +1,2 @@
 # SendCloudSDK
-SendCloud平台开发工具
+SendCloud平台开发工具包
