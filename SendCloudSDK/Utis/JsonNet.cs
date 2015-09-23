@@ -12,12 +12,29 @@ namespace SendCloudSDK.Utis
 
         public static string SerializeToEntity(object item)
         {
-            return JsonConvert.SerializeObject(item, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            try
+            {
+                return JsonConvert.SerializeObject(item, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Write(ex, MessageType.Error);
+                return null;
+            }
         }
 
         public static T DeserializeToString<T>(string jsonString)
         {
-            return JsonConvert.DeserializeObject<T>(jsonString);
+            try
+            {
+                return JsonConvert.DeserializeObject<T>(jsonString);
+
+            }
+            catch (Exception ex)
+            {
+                Logger.Instance.Write(ex, MessageType.Error);
+                return default(T);
+            }
         }
     }
 

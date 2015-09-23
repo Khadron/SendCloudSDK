@@ -5,7 +5,7 @@
  * Desc : 
  * 
  * 
- * *******************************************************************/ 
+ * *******************************************************************/
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -77,7 +77,7 @@ namespace SendCloudSDK.WebApi
         protected UrlEncodedFormEntity CreateFormBody<T>(T entity) where T : BaseParameter
         {
             var kvc = ResolveParameter(entity);
-            var result = new UrlEncodedFormEntity(kvc.Select(r => new NameValuePair(r.Key, r.Value)).ToList(), Encoding.UTF8);
+            var result = new UrlEncodedFormEntity(kvc.Select(r => new NameValuePair(r.Key, r.Value)).ToList(), Encoding.Default);
             return result;
         }
 
