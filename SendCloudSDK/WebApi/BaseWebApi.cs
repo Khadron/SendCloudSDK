@@ -109,7 +109,7 @@ namespace SendCloudSDK.WebApi
                 ReplenishApiInfo(parameter);
                 if (!VerifyParameter(parameter))
                 {
-                    return BuidErrorInfo("不合法参数");
+                    return BuildErrorInfo("不合法参数");
                 }
 
                 PostMethod.Uri = BuildUri(relativeUri);
@@ -131,7 +131,7 @@ namespace SendCloudSDK.WebApi
             catch (Exception ex)
             {
                 Logger.Instance.Write(ex, MessageType.Error);
-                return BuidErrorInfo(ex.Message);
+                return BuildErrorInfo(ex.Message);
             }
         }
 
@@ -153,7 +153,7 @@ namespace SendCloudSDK.WebApi
             }
         }
 
-        private string BuidErrorInfo(string errorInfo)
+        private static string BuildErrorInfo(string errorInfo)
         {
             return "{\"message\":\"error\",\"errors\":[" + errorInfo + "]}";
         }
