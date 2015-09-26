@@ -134,19 +134,19 @@ namespace SendCloudSDK.Utis
     /// </summary>
     public class LimitPropsContractResolver : DefaultContractResolver
     {
-        readonly string[] props = null;
+        readonly string[] _props = null;
 
         public LimitPropsContractResolver(string[] props)
         {
             //指定要序列化属性的清单
-            this.props = props;
+            this._props = props;
         }
 
         protected override IList<JsonProperty> CreateProperties(Type type, MemberSerialization memberSerialization)
         {
             IList<JsonProperty> list = base.CreateProperties(type, memberSerialization);
             //只保留清单有列出的属性
-            return list.Where(p => props.Contains(p.PropertyName)).ToList();
+            return list.Where(p => _props.Contains(p.PropertyName)).ToList();
         }
     }
     #endregion

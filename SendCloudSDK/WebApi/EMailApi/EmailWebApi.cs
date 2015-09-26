@@ -7,6 +7,7 @@
  * 
  * *******************************************************************/
 using System;
+using System.Collections.Generic;
 using CodeScales.Http.Entity;
 using CodeScales.Http.Methods;
 using SendCloudSDK.Models;
@@ -24,56 +25,49 @@ namespace SendCloudSDK.WebApi.EMailApi
 
         public SendResult SendEmail(SendParameter parameter)
         {
-            string result = base.CallApi(Config.SendConfig.MailSend, parameter, true);
-            return JsonNet.DeserializeToString<SendResult>(result);
+            return Execute<SendResult>(Config.SendConfig.MailSend, parameter, true);
         }
 
         public SendResult SendEmail(SendParameter parameter, string attachmentName, string attachmentPath)
         {
-            string result = base.CallApi(Config.SendConfig.MailSend, parameter, attachmentName, attachmentPath);
-            return JsonNet.DeserializeToString<SendResult>(result);
+            string json = base.CallApi(Config.SendConfig.MailSend, parameter, attachmentName, attachmentPath);
+            return JsonNet.DeserializeToString<SendResult>(json);
         }
 
         public SendResult SendTemplateEmail(SendTemplateParameter parameter)
         {
-            string result = base.CallApi(Config.SendConfig.MailSendTemplate, parameter, true);
-            return JsonNet.DeserializeToString<SendResult>(result);
+            return Execute<SendResult>(Config.SendConfig.MailSendTemplate, parameter, true);
         }
 
         public SendResult SendTemplateEmail(SendTemplateParameter parameter, string attachmentName, string attachmentPath)
         {
-            string result = base.CallApi(Config.SendConfig.MailSendTemplate, parameter, attachmentName, attachmentPath);
-            return JsonNet.DeserializeToString<SendResult>(result);
+            string json = base.CallApi(Config.SendConfig.MailSendTemplate, parameter, attachmentName, attachmentPath);
+            return JsonNet.DeserializeToString<SendResult>(json);
         }
 
         public TemplateResult GetTemplates()
         {
-            string result = base.CallApi(Config.TemplateConfig.TemplateGet, new TemplateGetParameter());
-            return JsonNet.DeserializeToString<TemplateResult>(result);
+            return Execute<TemplateResult>(Config.SendConfig.MailSendTemplate, new TemplateGetParameter());
         }
 
         public TemplateResult GetFirstTemplate(string templateName)
         {
-            string result = base.CallApi(Config.TemplateConfig.TemplateGet, new TemplateGetParameter() { InvokeName = templateName });
-            return JsonNet.DeserializeToString<TemplateResult>(result);
+            return Execute<TemplateResult>(Config.TemplateConfig.TemplateGet, new TemplateGetParameter() { InvokeName = templateName });
         }
 
         public TemplateResult CreateTemplate(TemplateParameter parameter)
         {
-            string result = base.CallApi(Config.TemplateConfig.TemplateCreate, parameter);
-            return JsonNet.DeserializeToString<TemplateResult>(result);
+            return Execute<TemplateResult>(Config.TemplateConfig.TemplateCreate, parameter);
         }
 
         public TemplateResult UpdateTemplate(TemplateParameter parameter)
         {
-            string result = base.CallApi(Config.TemplateConfig.TemplateUpdate, parameter);
-            return JsonNet.DeserializeToString<TemplateResult>(result);
+            return Execute<TemplateResult>(Config.TemplateConfig.TemplateUpdate, parameter);
         }
 
         public TemplateResult DeleteTemplate(DeleteTemplateParameter parameter)
         {
-            string result = base.CallApi(Config.TemplateConfig.TemplateDelete, parameter);
-            return JsonNet.DeserializeToString<TemplateResult>(result);
+            return Execute<TemplateResult>(Config.TemplateConfig.TemplateDelete, parameter);
         }
 
         public LabelsResult GetLabels(LabelsParameter parameter)
