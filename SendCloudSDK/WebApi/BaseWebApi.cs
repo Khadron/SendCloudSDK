@@ -158,13 +158,15 @@ namespace SendCloudSDK.WebApi
             return "{\"message\":\"error\",\"errors\":[" + errorInfo + "]}";
         }
 
-        protected T Execute<T>(string url, BaseParameter parameter, bool multipart = false) where T : BaseResult, new()
+        protected TR Execute<TR, TP>(string url, TP parameter, bool multipart = false)
+            where TR : BaseResult, new()
+            where TP : BaseParameter, new()
         {
-            string json = CallApi(Config.SendConfig.MailSend, parameter, multipart);
-            var result = JsonNet.DeserializeToString<T>(json);
+            string json = CallApi(url, parameter, multipart);
+            var result = JsonNet.DeserializeToString<TR>(json);
             if (result == null)
             {
-                return new T { Errors = new List<string> { BuildErrorInfo(json) } };
+                return new TR { Errors = new List<string> { BuildErrorInfo(json) } };
             }
             return result;
         }

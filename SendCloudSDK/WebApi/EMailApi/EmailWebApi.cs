@@ -25,7 +25,7 @@ namespace SendCloudSDK.WebApi.EMailApi
 
         public SendResult SendEmail(SendParameter parameter)
         {
-            return Execute<SendResult>(Config.SendConfig.MailSend, parameter, true);
+            return Execute<SendResult, SendParameter>(Config.SendConfig.MailSend, parameter, true);
         }
 
         public SendResult SendEmail(SendParameter parameter, string attachmentName, string attachmentPath)
@@ -36,7 +36,7 @@ namespace SendCloudSDK.WebApi.EMailApi
 
         public SendResult SendTemplateEmail(SendTemplateParameter parameter)
         {
-            return Execute<SendResult>(Config.SendConfig.MailSendTemplate, parameter, true);
+            return Execute<SendResult, SendTemplateParameter>(Config.SendConfig.MailSendTemplate, parameter, true);
         }
 
         public SendResult SendTemplateEmail(SendTemplateParameter parameter, string attachmentName, string attachmentPath)
@@ -47,27 +47,27 @@ namespace SendCloudSDK.WebApi.EMailApi
 
         public TemplateResult GetTemplates()
         {
-            return Execute<TemplateResult>(Config.SendConfig.MailSendTemplate, new TemplateGetParameter());
+            return Execute<TemplateResult, TemplateGetParameter>(Config.SendConfig.MailSendTemplate, new TemplateGetParameter());
         }
 
         public TemplateResult GetFirstTemplate(string templateName)
         {
-            return Execute<TemplateResult>(Config.TemplateConfig.TemplateGet, new TemplateGetParameter() { InvokeName = templateName });
+            return Execute<TemplateResult, TemplateGetParameter>(Config.TemplateConfig.TemplateGet, new TemplateGetParameter() { InvokeName = templateName });
         }
 
         public TemplateResult CreateTemplate(TemplateParameter parameter)
         {
-            return Execute<TemplateResult>(Config.TemplateConfig.TemplateCreate, parameter);
+            return Execute<TemplateResult, TemplateParameter>(Config.TemplateConfig.TemplateCreate, parameter);
         }
 
         public TemplateResult UpdateTemplate(TemplateParameter parameter)
         {
-            return Execute<TemplateResult>(Config.TemplateConfig.TemplateUpdate, parameter);
+            return Execute<TemplateResult, TemplateParameter>(Config.TemplateConfig.TemplateUpdate, parameter);
         }
 
         public TemplateResult DeleteTemplate(DeleteTemplateParameter parameter)
         {
-            return Execute<TemplateResult>(Config.TemplateConfig.TemplateDelete, parameter);
+            return Execute<TemplateResult, DeleteTemplateParameter>(Config.TemplateConfig.TemplateDelete, parameter);
         }
 
         public LabelsResult GetLabels(LabelsParameter parameter)
