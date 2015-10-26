@@ -29,7 +29,7 @@ namespace SendCloudSDK.WebApi.Interface
         LabelResult UpdateLabel(LabelParameter parameter);
         LabelResult DeleteLabel(LabelParameter parameter);
 
-        StatsResult GeteByDays(StatsParameter parameter);
+        StatsResult GetByDays(StatsParameter parameter);
         StatsResult GetByHours(StatsParameter parameter);
         InvalidStatsResult GetinInvalids(StatsParameter parameter);
 

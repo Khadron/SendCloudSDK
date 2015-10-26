@@ -3,14 +3,60 @@ using Newtonsoft.Json;
 
 namespace SendCloudSDK.Models
 {
-    public class StatsResult : BaseResult
+    public class StatsBase
     {
         [JsonProperty("sendDate")]
         public DateTime SendDate { get; set; } //发送日期
-        [JsonProperty("request")]
-        public int Request { get; set; }//  请求总数
         [JsonProperty("apiUser")]
         public string ApiUser { get; set; } //子账号
+        [JsonProperty("labelId")]
+        public int LabelId { get; set; } //标签ID
+        [JsonProperty("labelName")]
+        public string LabelName { get; set; } //标签名称
+        [JsonProperty("domain")]
+        public string Domian { get; set; } //域名
+    }
+
+
+    public class StatsResult : BaseResult
+    {
+        [JsonProperty("stats")]
+        public Stats Stats { get; set; }
+    }
+
+    public class InvalidStatsResult : BaseResult
+    {
+        [JsonProperty("stats")]
+        public InvalidStats Stats { get; set; }
+
+    }
+
+    public class InvalidStats : StatsBase
+    {
+        [JsonProperty("sendcloudBlacklist")]
+        public int BlackNum { get; set; } //在sendcloud黑名单的个数
+        [JsonProperty("ubsubscribe")]
+        public int Ubsubscribe { get; set; } //在取消订阅列表的个数
+        [JsonProperty("espUnvaliable")]
+        public int EspUnvaliable { get; set; } //esp服务器不可达的个数
+        [JsonProperty("recipientAddressError")]
+        public int RecipientAddressError { get; set; } //收件人格式错误的个数
+        [JsonProperty("ipOrDomainRejected")]
+        public int IpOrDomainRejected { get; set; } //ip或者域名被拒个数
+        [JsonProperty("recipientNotFound")]
+        public int RecipientNotFound { get; set; } //收件人不存在个数
+        [JsonProperty("spamEmails")]
+        public int SpamEmails { get; set; } //垃圾邮件个数
+        [JsonProperty("senderOrRecipientRejected")]
+        public int SenderOrRecipientRejected { get; set; } //发信人或者收件人被拒个数
+        [JsonProperty("others")]
+        public int Others { get; set; } //其他
+    }
+
+    public class Stats : StatsBase
+    {
+        [JsonProperty("request")]
+        public int Request { get; set; }//  请求总数
         [JsonProperty("deliveredNum")]
         public string DeliveredNum { get; set; }// 送达数量
         [JsonProperty("clickNum")]
@@ -47,43 +93,6 @@ namespace SendCloudSDK.Models
         public float UniqueClicksPercent { get; set; } 	//独立点击比例
         [JsonProperty("invalidEmails_percent")]
         public float InvalidEmailsPercent { get; set; } 	//无效邮件比例
-        [JsonProperty("domain")]
-        public string Domain { get; set; } //域名
-        [JsonProperty("labelName")]
-        public string LabelName { get; set; } 	//标签名
-        [JsonProperty("labelId")]
-        public string LabelId { get; set; } //标签ID
     }
 
-    public class InvalidStatsResult : BaseResult
-    {
-        [JsonProperty("sendDate")]
-        public DateTime SendDate { get; set; } //发送日期，格式为yyyy-MM-dd
-        [JsonProperty("apiUser")]
-        public string ApiUser { get; set; }	//子账号
-        [JsonProperty("labelId")]
-        public int LabelId { get; set; } //标签ID
-        [JsonProperty("labelName")]
-        public string LabelName { get; set; } //标签名称
-        [JsonProperty("domain")]
-        public string Domian { get; set; } //域名
-        [JsonProperty("sendcloudBlacklist")]
-        public int BlackNum { get; set; } //在sendcloud黑名单的个数
-        [JsonProperty("ubsubscribe")]
-        public int Ubsubscribe { get; set; } //在取消订阅列表的个数
-        [JsonProperty("espUnvaliable")]
-        public int espUnvaliable { get; set; } //esp服务器不可达的个数
-        [JsonProperty("recipientAddressError")]
-        public int RecipientAddressError { get; set; } //收件人格式错误的个数
-        [JsonProperty("ipOrDomainRejected")]
-        public int IpOrDomainRejected { get; set; } //ip或者域名被拒个数
-        [JsonProperty("recipientNotFound")]
-        public int RecipientNotFound { get; set; } //收件人不存在个数
-        [JsonProperty("spamEmails")]
-        public int SpamEmails { get; set; } //垃圾邮件个数
-        [JsonProperty("senderOrRecipientRejected")]
-        public int SenderOrRecipientRejected { get; set; } //发信人或者收件人被拒个数
-        [JsonProperty("others")]
-        public int Others { get; set; } //其他
-    }
 }

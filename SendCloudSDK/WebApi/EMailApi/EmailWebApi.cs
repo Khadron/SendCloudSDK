@@ -100,7 +100,7 @@ namespace SendCloudSDK.WebApi.EMailApi
             return JsonNet.DeserializeToString<LabelResult>(result);
         }
 
-        public StatsResult GeteByDays(StatsParameter parameter)
+        public StatsResult GetByDays(StatsParameter parameter)
         {
             string result = base.CallApi(Config.DataStatisticsConfig.StatiGet, parameter);
             return JsonNet.DeserializeToString<StatsResult>(result);
