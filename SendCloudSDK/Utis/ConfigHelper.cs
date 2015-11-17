@@ -1,11 +1,12 @@
 ﻿/******************************************************************* 
  * FileName: ConfigHelper.cs
  * Author   : Qiang Kong
- * Date : 2015-09-09 09:54:27
+ * Date : 2015-11-10 14:54:39
  * Desc : 
- * 强类型操作配置文件
  * 
+ * 强类型操作配置文件
  * *******************************************************************/
+
 using System;
 using System.Configuration;
 using System.IO;
@@ -21,9 +22,9 @@ namespace SendCloudSDK.Utis
 
         private static ConfigHelper _instance;
 
-        public static bool CreateImpl(string configName = null)
+        public static bool CreateImpl(string configPath = null)
         {
-            var instance = GetInstance(configName);
+            var instance = GetInstance(configPath);
             return instance != null;
         }
 
@@ -32,20 +33,20 @@ namespace SendCloudSDK.Utis
             return GetInstance(null);
         }
 
-        public static ConfigHelper GetInstance(string configName)
+        public static ConfigHelper GetInstance(string configPath)
         {
-            return _instance ?? (_instance = new ConfigHelper(configName));
+            return _instance ?? (_instance = new ConfigHelper(configPath));
         }
 
         private readonly ExeConfigurationFileMap _exeConfigMap;
 
-        private ConfigHelper(string configName)
+        private ConfigHelper(string configPath)
         {
-            if (string.IsNullOrWhiteSpace(configName))
+            if (string.IsNullOrWhiteSpace(configPath))
             {
-                configName = String.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory.TrimEnd('/', '\\'), "SendCloud.config");
+                configPath = String.Format("{0}\\{1}", AppDomain.CurrentDomain.BaseDirectory.TrimEnd('/', '\\'), "SendCloud.config");
 
-                if (!File.Exists(configName))
+                if (!File.Exists(configPath))
                 {
                     string[] filePaths = Directory.GetFiles(AppDomain.CurrentDomain.BaseDirectory, "SendCloud.config", SearchOption.AllDirectories);
                     if (filePaths.Length == 0)
@@ -53,11 +54,12 @@ namespace SendCloudSDK.Utis
                         throw new Exception("未找到SendCloud.config");
                     }
 
-                    configName = filePaths[0];
+                    configPath = filePaths[0];
                 }
+
             }
 
-            _exeConfigMap = new ExeConfigurationFileMap { ExeConfigFilename = configName };
+            _exeConfigMap = new ExeConfigurationFileMap { ExeConfigFilename = configPath };
         }
 
         public T GetSection<T>(string sectionName) where T : class,new()
@@ -87,68 +89,82 @@ namespace SendCloudSDK.Utis
 
         public void ModifySection<T>(string sectionName, string sectionGroupName, T entity) where T : class,new()
         {
-            var configuration = ConfigurationManager.OpenMappedExeConfiguration(_exeConfigMap, ConfigurationUserLevel.None);
-
-            ConfigurationSection section;
-            if (string.IsNullOrWhiteSpace(sectionGroupName))
-            {
-                section = configuration.GetSection(sectionName);
-            }
-            else
+            try
             {
 
-                var group = configuration.GetSectionGroup(sectionGroupName);
-                if (group == null)
+
+                var configuration = ConfigurationManager.OpenMappedExeConfiguration(_exeConfigMap, ConfigurationUserLevel.None);
+
+                ConfigurationSection section;
+                if (string.IsNullOrWhiteSpace(sectionGroupName))
                 {
-                    throw new Exception("SectionGroup为空");
+                    section = configuration.GetSection(sectionName);
                 }
-                section = group.Sections[sectionName];
-            }
-
-
-            if (section != null)
-            {
-
-                var info = section.SectionInformation;
-                var dicAssemblyName = typeof(DictionarySectionHandler).AssemblyQualifiedName;
-                if (!info.Type.Equals(dicAssemblyName))
+                else
                 {
-                    throw new Exception("暂时支持DictionarySectionHandler的节点");
-                }
 
-                var xmlStr = info.GetRawXml();
-
-                Type st = entity.GetType();
-                PropertyInfo[] spis = st.GetProperties();
-
-                int curIndex = 0;
-                string tagStr;
-                foreach (var item in spis)
-                {
-                    var key = item.Name;
-
-                    curIndex = xmlStr.IndexOf(key, curIndex, StringComparison.Ordinal);
-
-                    if (curIndex != -1)
+                    var group = configuration.GetSectionGroup(sectionGroupName);
+                    if (group == null)
                     {
-                        tagStr = string.Format("{0}\" {3}=\"{1}\" /{2}", key, item.GetValue(entity, null), Epilogue, ValFlag);
-                        int endIndex = xmlStr.IndexOf(Epilogue, curIndex, StringComparison.Ordinal);
-                        var ss = xmlStr.Substring(curIndex, endIndex - curIndex + 1);
-                        xmlStr = xmlStr.Replace(ss, tagStr);
-                        curIndex = endIndex;
+                        throw new Exception("SectionGroup为空");
                     }
-                    else
+                    section = group.Sections[sectionName];
+                }
+
+
+                if (section != null)
+                {
+
+                    var info = section.SectionInformation;
+                    var dicAssemblyName = typeof(DictionarySectionHandler).FullName;
+                    if (!info.Type.Contains(dicAssemblyName))
                     {
-                        curIndex = 0;
+                        throw new Exception("暂时支持DictionarySectionHandler的节点");
                     }
 
+                    var xmlStr = info.GetRawXml();
+
+                    Type st = entity.GetType();
+                    PropertyInfo[] spis = st.GetProperties();
+
+                    int curIndex = 0;
+                    string tagStr;
+                    foreach (var item in spis)
+                    {
+                        var key = item.Name;
+
+                        curIndex = xmlStr.IndexOf(key, curIndex, StringComparison.Ordinal);
+
+                        if (curIndex != -1)
+                        {
+                            var normalStr = item.GetValue(entity, null)
+                                .ToString()
+                                .Replace("<", "&lt;")
+                                .Replace("&", "&amp;")
+                                .Replace(">", "&gt;").Replace("'", "&apos;").Replace("\"", "&quot;");
+                            tagStr = string.Format("{0}\" {3}=\"{1}\" /{2}", key, normalStr, Epilogue, ValFlag);
+                            int endIndex = xmlStr.IndexOf(Epilogue, curIndex, StringComparison.Ordinal);
+                            var ss = xmlStr.Substring(curIndex, endIndex - curIndex + 1);
+                            xmlStr = xmlStr.Replace(ss, tagStr);
+                            curIndex = endIndex;
+                        }
+                        else
+                        {
+                            curIndex = 0;
+                        }
+
+                    }
+
+                    info.SetRawXml(xmlStr);
+                    info.Type = dicAssemblyName;
+
+                    configuration.Save(ConfigurationSaveMode.Modified);
                 }
+            }
+            catch (Exception ex)
+            {
 
-                info.SetRawXml(xmlStr);
-                info.Type = dicAssemblyName;
-
-                configuration.Save(ConfigurationSaveMode.Modified);
-
+                throw new Exception(ex.Message);
             }
         }
 
