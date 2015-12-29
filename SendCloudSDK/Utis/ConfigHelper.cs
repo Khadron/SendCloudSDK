@@ -128,13 +128,11 @@ namespace SendCloudSDK.Utis
                     PropertyInfo[] spis = st.GetProperties();
 
                     int curIndex = 0;
-                    string tagStr;
                     foreach (var item in spis)
                     {
                         var key = item.Name;
 
-                        curIndex = xmlStr.IndexOf(key, curIndex, StringComparison.Ordinal);
-
+                        curIndex = xmlStr.IndexOf(string.Format("<add key=\"{0}\"", key), curIndex, StringComparison.Ordinal);
                         if (curIndex != -1)
                         {
                             var normalStr = item.GetValue(entity, null)
@@ -142,7 +140,7 @@ namespace SendCloudSDK.Utis
                                 .Replace("<", "&lt;")
                                 .Replace("&", "&amp;")
                                 .Replace(">", "&gt;").Replace("'", "&apos;").Replace("\"", "&quot;");
-                            tagStr = string.Format("{0}\" {3}=\"{1}\" /{2}", key, normalStr, Epilogue, ValFlag);
+                            var tagStr = string.Format("<add key=\"{0}\" {3}=\"{1}\" /{2}", key, normalStr, Epilogue, ValFlag);
                             int endIndex = xmlStr.IndexOf(Epilogue, curIndex, StringComparison.Ordinal);
                             var ss = xmlStr.Substring(curIndex, endIndex - curIndex + 1);
                             xmlStr = xmlStr.Replace(ss, tagStr);
